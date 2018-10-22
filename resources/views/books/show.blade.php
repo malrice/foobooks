@@ -1,19 +1,18 @@
+@extends('layouts.master')
 
- <!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
+@section('title')
+    {{ $title }}
+@endsection
 
+@push('head')
+    {{-- Page specific CSS includes should be defined here; this .css file does not exist yet, but we can create it --}}
+    <link href='/css/books/show.css' rel='stylesheet'>
+@endpush
 
-    <title>Show book: <? $title ?> </title>
+@section('content')
+    <h1>{{ $title }}</h1>
 
-</head>
-<body>
-
-<h1>Foobooks</h1>
-
-    <p>You are viewing the book <?php echo $title; ?> </p>
-
-</body>
-</html>
-
+    <p>
+        Details about this book will go here...
+    </p>
+@endsection
