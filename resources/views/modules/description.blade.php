@@ -1,0 +1,1 @@
+Foobooks is a simple book manager created as a proof of concept for Dynamic Web Applications.

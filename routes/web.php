@@ -1,5 +1,7 @@
 <?php
 
+
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,10 +19,16 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/books/search', 'BookController@search');
+Route::get('/books/search-process', 'BookController@searchProcess');
 
+Route::get('/books/create', 'BookController@create');
+Route::post('/books', 'BookController@store');
 
 Route::get('/books/{title}', 'BookController@show');
-
 Route::get('/books', 'BookController@index');
 
 Route::any('/practice/{n?}', 'PracticeController@index');
+
+Route::view('/about', 'about');
+Route::view('contact', 'contact');
