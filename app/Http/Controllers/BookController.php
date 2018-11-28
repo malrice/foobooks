@@ -15,11 +15,6 @@ class BookController extends Controller
     {
     return view ('books.index');}
 
-    /*public function show($title)
-    {
-        return view('books.show')->with(['title'=> $title]);
-    }*/
-
     public function show($title)
     {
         return view('books.show')->with(['title' => $title]);
