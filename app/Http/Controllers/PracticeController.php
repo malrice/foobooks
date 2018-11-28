@@ -10,6 +10,23 @@ class PracticeController extends Controller
     /**
      * Demonstrating using an external package
      */
+
+
+     public function practice7(){
+
+         $result = Book::where('author', '=', 'J.K. Rowling')->delete();
+
+         dump($result->toArray());
+
+
+     ;}
+
+
+
+
+
+
+
 public function practice6(){
 $book = Book::where('author', '=', 'F. Scott Fitzgerald')->first();
 
@@ -28,15 +45,12 @@ dump("Book not found, can't update.");
 
 public function practice5()
     {
-        $book = new Book();
-        $books = $book->where('title', 'LIKE', '%Harry Potter%')->get();
+        $books = Book::where('author', 'LIKE', '%Rowling%')->get();
 
-        if ($books->isEmpty()) {
-            dump('No matches found');
-        } else {
-            foreach ($books as $book) {
-                dump($book->title);
-            }
+        foreach($books as $book) {
+
+            dump($book->title);
+
         }
     }
 
