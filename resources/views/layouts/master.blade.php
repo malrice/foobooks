@@ -13,6 +13,14 @@
 </head>
 <body>
 
+
+@if(session('alert'))
+    <div class='alert'>
+        {{ session('alert') }}
+    </div>
+@endif
+
+
 <header>
     <a href='/'><img src='/images/foobooks-logo@2x.png' id='logo' alt='Foobooks Logo'></a>
    @include('modules.nav')

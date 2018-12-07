@@ -33,6 +33,18 @@ Route::any('/practice/{n?}', 'PracticeController@index');
 Route::view('/about', 'about');
 Route::view('contact', 'contact');
 
+
+# Show the form to edit a specific book
+Route::get('/books/{id}/edit', 'BookController@edit');
+
+#delete a record
+Route::get('/books/{id}/delete', 'BookController@deletePage');
+Route::delete('/books/{id}', 'BookController@destroy');
+
+# Process the form to edit a specific book
+Route::put('/books/{id}', 'BookController@update');
+
+
 Route::get('/debug', function () {
 
     $debug = [

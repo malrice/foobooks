@@ -8,18 +8,55 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Book;
 
 class BookController extends Controller
 {
     public function index()
     {
-    return view ('books.index');}
+        $books = Book::orderBy('title')->get();
 
-    public function show($title)
-    {
-        return view('books.show')->with(['title' => $title]);
+        #$newBooks = Book::latest()->limit(3)->get();
+
+        $newBooks = $books->sortByDesc('created_at')->take(3);
+
+        return view('books.index')->with([
+            'books' => $books,
+            'newBooks' => $newBooks
+        ]);
     }
 
+    /* GET /books/title */
+    public function show(Request $request, $id)
+    {
+        $book = Book::find($id);
+
+        return view('books.show')->with([
+            'book' => $book
+        ]);
+    }
+
+
+    public function deletePage(Request $request, $id)
+    {
+        $book = Book::find($id);
+        if(!$book) {
+        return redirect('/books')->with('alert', 'Book not found');
+        }
+
+        return view('books.delete')->with([
+            'book'=>$book
+            ]);
+    }
+
+    public function destroy( $id)
+    {   $book = Book::find($id);
+        $book->delete();
+
+        return redirect('/books')->with([
+            'alert'=> '"' . $book->title . '" was removed.'
+        ]);
+    }
     /**
      * GET
      * /books/search-process
@@ -33,18 +70,18 @@ class BookController extends Controller
             'searchResults' => $request->session()->get('searchResults', []),
         ]);
     }
-        /** GET
-        /books/search-process
-         *Process teh form to search for a book
-         */
+    /** GET
+     * /books/search-process
+     *Process teh form to search for a book
+     */
 
     /**
      * GET
      * /books/search-process
      * Process the form to search for a book
      */
-    public function searchProcess(Request $request) {
-
+    public function searchProcess(Request $request)
+    {
         # Start with an empty array of search results; books that
         # match our search query will get added to this array
         $searchResults = [];
@@ -80,9 +117,7 @@ class BookController extends Controller
                 if ($match) {
                     $searchResults[$title] = $book;
                 }
-
             }
-
         }
 
         # Redirect back to the search page w/ the searchTerm *and* searchResults (if any) stored in the session
@@ -112,8 +147,8 @@ class BookController extends Controller
      * POST /books
      * Process the form for adding a new book
      */
-    public function store(Request $request) {
-
+    public function store(Request $request)
+    {
         # Validate the request data
         $request->validate([
             'title' => 'required',
@@ -123,11 +158,60 @@ class BookController extends Controller
             'purchase_url' => 'required|url'
         ]);
 
-        # Note: If validation fails, it will redirect the visitor back to the form page
-        # and none of the code that follows will execute.
+        $book = new Book();
+        $book->title = $request->title;
+        $book->author = $request->author;
+        $book->published_year = $request->published_year;
+        $book->cover_url = $request->cover_url;
+        $book->purchase_url = $request->purchase_url;
+        $book->save();
 
-        # Code will eventually go here to add the book to the database,
-        # but for now we'll just dump the form data to the page for proof of concept
-        dump($request->all());
+        return redirect('/books')->with([
+            'alert' => 'Your book was added.'
+        ]);
     }
+
+    /*
+ * GET /books/{id}/edit
+ */
+    public function edit($id)
+    {
+        $book = Book::find($id);
+
+        if (!$book) {
+            return redirect('/books')->with([
+                'alert' => 'Book not found.'
+            ]);
+        }
+
+        return view('books.edit')->with([
+            'book' => $book
+        ]);
+    }
+
+
+## to Update a book
+    public function update(Request $request, $id)
+    {
+        $this->validate($request, [
+            'title' => 'required',
+            'author' => 'required',
+            'published_year' => 'required|digits:4|numeric',
+            'cover_url' => 'required|url',
+            'purchase_url' => 'required|url',
+        ]);
+
+        $book = Book::find($id);
+        $book->title = $request->input('title');
+        $book->author = $request->input('author');
+        $book->published_year = $request->input('published_year');
+        $book->cover_url = $request->input('cover_url');
+        $book->purchase_url = $request->input('purchase_url');
+        $book->save();
+
+        return redirect('/books/' . $id . '/edit')->with([
+            'alert' => 'Your changes were saved.'
+        ]);
+    }
+
 }

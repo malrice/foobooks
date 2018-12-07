@@ -24,7 +24,6 @@ class CreateBooksTable extends Migration
 
             # The rest of the fields...
             $table->string('title');
-            $table->string('author')->nullable(); # Example of a modifier
             $table->year('published_year');
             $table->string('cover_url');
             $table->string('purchase_url');

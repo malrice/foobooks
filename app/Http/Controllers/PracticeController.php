@@ -5,52 +5,66 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use IanLChapman\PigLatinTranslator\Parser;
 use App\Book;
+
 class PracticeController extends Controller
 {
     /**
      * Demonstrating using an external package
      */
 
+    public function practice15()
+    {
+        $books = Book::all();
 
-     public function practice7(){
+# This will output a JSON string
+        foreach ($books as $book) {
+            dump($book['title']);
+        }
+    }
 
-         $result = Book::where('author', '=', 'J.K. Rowling')->delete();
+    public function practice14()
+    {
+       $results = Book::orderBy('title')->first;
+       dump($results);
 
-         dump($result->toArray());
+        $results = Book::orderBy('title')->get;
+        dump($results->first());
 
-
-     ;}
-
-
-
-
-
+        }
 
 
-public function practice6(){
-$book = Book::where('author', '=', 'F. Scott Fitzgerald')->first();
 
-if (!$book) {
-dump("Book not found, can't update.");
-} else {
-    # Change some properties
-    $book->title = 'The Really Great Gatsby';
-    $book->published_year = '2025';
 
-    # Save the changes
-    $book->save();
+    public function practice7()
+    {
+        $books = Book::all();
+        echo $books;
+    }
 
-    dump('Update complete; check the database to confirm the update worked.');
-}}
+    public function practice6()
+    {
+        $book = Book::where('author', '=', 'F. Scott Fitzgerald')->first();
 
-public function practice5()
+        if (!$book) {
+            dump("Book not found, can't update.");
+        } else {
+            # Change some properties
+            $book->title = 'The Really Great Gatsby';
+            $book->published_year = '2025';
+
+            # Save the changes
+            $book->save();
+
+            dump('Update complete; check the database to confirm the update worked.');
+        }
+    }
+
+    public function practice5()
     {
         $books = Book::where('author', 'LIKE', '%Rowling%')->get();
 
-        foreach($books as $book) {
-
-            dump($book->title);
-
+        foreach ($books as $book) {
+            dump($book['title']);
         }
     }
 
@@ -71,9 +85,8 @@ public function practice5()
         # `books` table, with the above data
         $book->save();
 
-        dump('Added: '.$book->title);
+        dump('Added: ' . $book->title);
     }
-
 
     public function practice3()
     {
