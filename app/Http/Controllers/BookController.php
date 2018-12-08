@@ -8,6 +8,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Author;
 use App\Book;
 
 class BookController extends Controller
@@ -135,7 +136,13 @@ class BookController extends Controller
      */
     public function create(Request $request)
     {
-        return view('books.create');
+
+        $authors = Author::orderBy('last_name')->select('id', 'first_name', 'last_name' )->get();
+        dump($authors->toArray());
+
+        return view('books.create')->with([
+        'authors' => $authors
+        ]);
     }
 
 

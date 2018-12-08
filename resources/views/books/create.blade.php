@@ -23,8 +23,12 @@
         @include('modules.field-error', ['field' => 'title'])
 
         <label for='author_id'>* Author</label>
-        <input type='text' name='author' id='author' value='{{ old('author', 'Dr. Seuss') }}'>
-        @include('modules.field-error', ['field' => 'author'])
+        <select name='author'>
+            @foreach($authors as $author)
+            <option value = '{{$author->id}}'>{{ $author->first_name. ' '. $author->last_name }}</option>
+            @endforeach
+
+        </select>        @include('modules.field-error', ['field' => 'author'])
 
         <label for='published_year'>* Published Year (YYYY)</label>
         <input type='text' name='published_year' id='published_year' value='{{ old('published_year', '1960') }}'>
