@@ -10,6 +10,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Author;
 use App\Book;
+use App\Tag;
 
 class BookController extends Controller
 {
@@ -52,6 +53,7 @@ class BookController extends Controller
 
     public function destroy( $id)
     {   $book = Book::find($id);
+        $book->tags()->detach();
         $book->delete();
 
         return redirect('/books')->with([
@@ -137,7 +139,7 @@ class BookController extends Controller
     public function create(Request $request)
     {
 
-        $authors = Author::orderBy('last_name')->select('id', 'first_name', 'last_name' )->get();
+        $authors = Author::getForDropdown();
         dump($authors->toArray());
 
         return view('books.create')->with([
@@ -159,7 +161,7 @@ class BookController extends Controller
         # Validate the request data
         $request->validate([
             'title' => 'required',
-            'author' => 'required',
+            'author_id' => 'required',
             'published_year' => 'required|digits:4',
             'cover_url' => 'required|url',
             'purchase_url' => 'required|url'
@@ -167,7 +169,9 @@ class BookController extends Controller
 
         $book = new Book();
         $book->title = $request->title;
-        $book->author = $request->author;
+
+        #$author= Author::find($request->author_id);
+        $book->author_id = $request->author_id;
         $book->published_year = $request->published_year;
         $book->cover_url = $request->cover_url;
         $book->purchase_url = $request->purchase_url;
@@ -183,8 +187,15 @@ class BookController extends Controller
  */
     public function edit($id)
     {
-        $book = Book::find($id);
 
+        $book = Book::with('tags')->find($id);
+
+        $authors = Author::getForDropdown();
+
+        $tags = Tag::getForCheckboxes();
+
+        $tagsForThisBook = $book->tags()->pluck('tags.id')->toArray();
+        dump($tagsForThisBook);
         if (!$book) {
             return redirect('/books')->with([
                 'alert' => 'Book not found.'
@@ -192,7 +203,11 @@ class BookController extends Controller
         }
 
         return view('books.edit')->with([
-            'book' => $book
+            'book' => $book,
+            'authors' => $authors,
+            'tags' => $tags,
+            'tagsForThisBook'=> $tagsForThisBook
+
         ]);
     }
 
@@ -202,18 +217,23 @@ class BookController extends Controller
     {
         $this->validate($request, [
             'title' => 'required',
-            'author' => 'required',
+            'author_id' => 'required',
             'published_year' => 'required|digits:4|numeric',
             'cover_url' => 'required|url',
             'purchase_url' => 'required|url',
         ]);
 
+
+
         $book = Book::find($id);
-        $book->title = $request->input('title');
-        $book->author = $request->input('author');
-        $book->published_year = $request->input('published_year');
-        $book->cover_url = $request->input('cover_url');
-        $book->purchase_url = $request->input('purchase_url');
+
+        $book->tags()->sync($request->tags);
+
+        $book->title = $request->title;
+        $book->author_id = $request->author_id;
+        $book->published_year = $request->published_year;
+        $book->cover_url = $request->cover_url;
+        $book->purchase_url = $request->purchase_url;
         $book->save();
 
         return redirect('/books/' . $id . '/edit')->with([
